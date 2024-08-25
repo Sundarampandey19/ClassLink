@@ -25,7 +25,9 @@ router.post('/signup', async (req, res) => {
             password = await getHashedPassword(password)
             const result = await createProfile(username, name, ph_number, password, email)
             console.log(result)
-            res.status(200).json({ "message": "Made the user" })
+            const token = jwt.sign({ id: result[0].uid }, SECRET, { expiresIn: '1h' });
+            res.status(200).json({ "message": "User created successfully", token })
+            
 
         }
     } catch (err) {
@@ -72,7 +74,7 @@ router.post('/login', async (req, res) => {
 });
 
 // router.get('/me', authenticateJwt, async (req, res) => {
-//     const user = await User.findOne({ _id: req.userId });
+//     const 
 //     if (user) {
 //         res.json({ username: user.username });
 //     } else {

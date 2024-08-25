@@ -3,16 +3,18 @@ import AppNavbar from "./components/Navbar";
 import { Button } from "./components/ui/button";
 import Signup from "./pages/Signup";
 import LandingPage from "./pages/Home";
+import WhatsAppWebHome from "./pages/ChatsPage";
+import Navbar from "./components/Navbar";
 
 export default function App() {
   return (
     <>
-       <Routes>
+      <Navbar />
+      <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<Signup />} />
-        {/* <Route path="/login" element={<Login />} /> */}
+        <Route path="/chats" element={<WhatsAppWebHome />} />
       </Routes>
-      <Signup></Signup>
     </>
   )
 }
