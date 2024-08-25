@@ -1,24 +1,28 @@
-import stringifyArray from "../utils/stringify";
+import stringifyArray from "../utils/stringify.js";
+import pool from "../db.js";
 
-async function createProfile(username ,name , ph_number , password, email ,pool){
-    const query = `INSERT INTO profile (uid,username ,name , ph_number, hashed_password , email) values (UUID() ,?,?,?,? ?)`;
-    let values = [username , name , ph_number , password ,email]
-    values = stringifyArray(values)
+async function createProfile(username ,name , ph_number , hashed_password, email ){
+    const query = `INSERT INTO profile (uid,username ,name , ph_number, hashed_password , email) values (UUID() ,?,?,?,?,?) returning *;`
+    let values = [username , name , ph_number , hashed_password ,email]        
 
-    // how to make password into hashed password    
-
-
-    let conn = await pool.getConnection();
-
-    try{
-        const rows = await conn.query(query,values);
-        console.log(rows);  
-        return rows;
-    }catch(err){
-        console.log(err)
-    }finally{
-        if(conn)conn.end();
-    }
+    try {
+        const result= await pool.query(query, values);
+        console.log(result);
+        return result;
+    } catch (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+            // Parse the error message to find which field caused the issue
+            if (err.sqlMessage.includes('for key \'username\'')) {
+                throw new Error('Duplicate username');
+            } else if (err.sqlMessage.includes('for key \'ph_number\'')) {
+                throw new Error('Duplicate phone number');
+            } else if (err.sqlMessage.includes('for key \'email\'')) {
+                throw new Error('Duplicate email');
+            }
+        }
+        console.error('Error executing query:', err);
+        throw err;
+    } 
 
 }
 
