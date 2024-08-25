@@ -7,8 +7,6 @@ UniversityChatApp is a communication platform tailored for universities to centr
 - Centralized communication with dedicated channels
 - User role management
 - Group chats and message threads
-- File sharing and search functionality
-- Real-time notifications
 - Customizable settings
 
 ## Installation
