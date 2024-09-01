@@ -5,6 +5,7 @@ const router = express.Router();
 import pool from "../db.js"
 import { createProfile } from '../controllers/profile.js';
 import { getHashedPassword, verifyPassword } from '../utils/hashUtil.js';
+import { authenticateJwt } from "../middleware/index.js";
 const SECRET = 'SECr3t';
 
 
@@ -61,10 +62,9 @@ router.post('/login', async (req, res) => {
                 res.status(200).json({ "message": "Wrong Password" })
             }
             else {
-                //continue the jwt
-                const token = jwt.sign({ id: response[0].uid }, SECRET, { expiresIn: '1h' });
+                    const token = jwt.sign({ id: response[0].uid }, SECRET, { expiresIn: '1h' });
                 res.status(200).json({ "message": "Logged in successfully", token })
-
+                
             }
         } catch {
             res.status(500).send("Error while Logging in")
@@ -73,13 +73,24 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// router.get('/me', authenticateJwt, async (req, res) => {
-//     const 
-//     if (user) {
-//         res.json({ username: user.username });
-//     } else {
-//         res.status(403).json({ message: 'User not logged in' });
-//     }
-// });
+router.post('/me', authenticateJwt, async (req, res) => {     
+    const { userId} = req
+    try {
+        const query = `SELECT * FROM profile WHERE uid = ?;`
+        let response = await pool.query(query, userId)
+        console.log(userId)
+        if (!response) {
+            res.status(200).json({ "message": "User not found" })
+        }
+        else {
+            const {name} = response[0]
+            console.log(name)
+            res.status(200).json({  username : name})   
+        }
+    } catch {
+        res.status(500).send("Error getting user")
+    }
+    
+});
 
 export default router

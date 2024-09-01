@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
-import { useRecoilState } from 'recoil';
 import { authState } from '@/store/authState';
+import { useRecoilState } from 'recoil';
 
-export default function Signup(){
+export default function Login(){
   const navigate = useNavigate()
-  const [setAuth] = useRecoilState(authState);
-
+  const [auth, setAuth] = useRecoilState(authState);
   const [formData, setFormData] = useState({
-    name: '',
     username: '',
-    ph_number: '',
-    email: '',
     password: '',
   });
 
@@ -24,17 +20,17 @@ export default function Signup(){
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, username, ph_number, email, password } = formData;
+    const { username, password } = formData;
 
-    if (!name || !username || !ph_number || !email || !password) {
+    if (!username ||  !password) {
       setError('All fields are required');
       return;
     }
 
-    const response = await fetch('http://localhost:3000/signup', {
+    const response = await fetch('http://localhost:3000/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, username, ph_number, email, password })
+      body: JSON.stringify({  username, password })
     });
     console.log(response) 
     const data = await response.json();
@@ -43,7 +39,7 @@ export default function Signup(){
       setAuth({ token: data.token, username });
       console.log("token:",data.token)
       navigate("/chats");
-      toast.success('User Created Successfully!');
+      toast.success('Logged In successfully!');
     } else {
       alert("Error while signing up");
     }
@@ -60,47 +56,11 @@ export default function Signup(){
           {error && <div className="text-red-500 text-sm">{error}</div>}
 
           <div>
-            <label className="block text-gray-700 dark:text-gray-300">Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded mt-1 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-              required
-            />
-          </div>
-
-          <div>
             <label className="block text-gray-700 dark:text-gray-300">Username</label>
             <input
               type="text"
               name="username"
               value={formData.username}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded mt-1 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 dark:text-gray-300">Phone Number</label>
-            <input
-              type="text"
-              name="ph_number"
-              value={formData.ph_number}
-              onChange={handleChange}
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded mt-1 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-gray-700 dark:text-gray-300">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
               onChange={handleChange}
               className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded mt-1 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
               required
@@ -123,7 +83,7 @@ export default function Signup(){
             type="submit"
             className="w-full bg-blue-500 dark:bg-blue-700 text-white p-2 rounded hover:bg-blue-600 dark:hover:bg-blue-800 transition"
           >
-            Sign Up
+            Log in
           </button>
           <Toaster />
         </form>

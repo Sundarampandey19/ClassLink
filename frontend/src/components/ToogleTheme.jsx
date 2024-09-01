@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function ThemeToggle() {
   // Initialize the theme state based on localStorage or default to light mode
   const [isDarkMode, setIsDarkMode] = useState(
     localStorage.getItem('theme') === 'dark'
   );
+  const notify = () => toast.success('Theme updated');
 
   // Apply the theme class to the body
   useEffect(() => {
@@ -13,10 +15,13 @@ export default function ThemeToggle() {
   }, [isDarkMode]);
 
   const handleToggle = () => {
+    notify()
+    
     setIsDarkMode(!isDarkMode);
   };
 
   return (
+    <>
     <button
       onClick={handleToggle}
       className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center"
@@ -54,5 +59,7 @@ export default function ThemeToggle() {
         </svg>
       )}
     </button>
+    <Toaster />
+    </>
   );
 }

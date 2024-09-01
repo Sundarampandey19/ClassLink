@@ -6,9 +6,9 @@ export default function WhatsAppWebHome() {
 
       {/* Sidebar */}
       <div className="w-1/4 bg-gray-100 dark:bg-gray-800 border-r dark:border-gray-700">
-        <div className="p-4 border-b dark:border-gray-700">
+        {/* <div className="p-4 border-b dark:border-gray-700">
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">WhatsApp</h1>
-        </div>
+        </div> */}
         <div className="p-4 border-b dark:border-gray-700">
           <input
             type="text"
@@ -39,7 +39,7 @@ export default function WhatsAppWebHome() {
           /> */}
           <h2 className="text-3xl font-light mb-4 text-gray-900 dark:text-white">Keep your phone connected</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            WhatsApp connects to your phone to sync messages. To reduce data usage, connect your phone to Wi-Fi.
+            Class Link connects to your phone to sync messages. To reduce data usage, connect your phone to Wi-Fi.
           </p>
           <hr className="w-full mb-4 border-gray-300 dark:border-gray-600" />
           <p className="text-sm text-gray-500 dark:text-gray-400">
