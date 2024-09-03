@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import express from 'express'
-// import { authenticateJwt, SECRET } from "../middleware/index.js"
 const router = express.Router();
 import pool from "../db.js"
 import { createProfile } from '../controllers/profile.js';

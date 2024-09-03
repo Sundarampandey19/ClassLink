@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { authState } from '@/store/authState';
 
 export default function Signup(){
   const navigate = useNavigate()
-  const [setAuth] = useRecoilState(authState);
+  const setAuth = useSetRecoilState(authState);
 
   const [formData, setFormData] = useState({
     name: '',
