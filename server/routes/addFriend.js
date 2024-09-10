@@ -1,6 +1,6 @@
 import express from "express"
 import { authenticateJwt } from "../middleware/index.js";
-import pool from "../db.js";
+import pool from "../connections/db.js";
 import { acceptRequest, listFriend, listRequest, sendRequest, sentRequest } from "../controllers/friendRequest.js";
 const router = express.Router();
 
@@ -24,9 +24,9 @@ router.get('/', authenticateJwt, async (req, res) => {
 export default router.get('/users', authenticateJwt, async (req, res) => {
     const { userId } = req
     const query = `SELECT uid, name,username FROM profile where uid != ?`;
-    const response = await pool.query(query, String(userId))
-    console.log(response)
-    res.status(200).send(response)
+    const [rows] = await pool.query(query, String(userId))
+    console.log(rows)
+    res.status(200).send(rows)
 })
 
 
@@ -87,7 +87,7 @@ router.patch('/acceptRequest' , authenticateJwt ,async (req,res)=>{
     try{
         const response = await acceptRequest(uid)
         // const data = response.json()
-        res.status(200).send    ("Request Accepted")
+        res.status(200).json({"message":"Request accepted"})
     }catch(e){
         console.log(e)
         res.status(400).send("Something is off")

@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import express from 'express'
 const router = express.Router();
-import pool from "../db.js"
+import pool from "../connections/db.js"
 import { createProfile } from '../controllers/profile.js';
 import { getHashedPassword, verifyPassword } from '../utils/hashUtil.js';
 import { authenticateJwt } from "../middleware/index.js";
@@ -16,9 +16,11 @@ router.post('/signup', async (req, res) => {
         return res.status(400).send("Missing values found");
     }
     try {
+        console.log(username,name,password,ph_number,email)
         const query = `SELECT * FROM profile WHERE username = ?;`
-        let response = await pool.query(query, username)
-        if (response.length !== 0) {
+        let [rows,fields] = await pool.query(query, username)
+        console.log(rows)
+        if (rows.length !== 0) {
             res.status(409).send("Username already exists")
 
         } else {
@@ -49,19 +51,22 @@ router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     (typeof username === 'string' ? username : JSON.stringify(username))
     const query = `SELECT * FROM profile WHERE username = ?;`
-    let response = await pool.query(query, username)
-    if (response.length === 0) {
+    let [rows] = await pool.query(query, username)
+    console.log("rows" , rows)
+    // console.log("fiels" , fields)
+    if (rows.length === 0) {
+        console.log("Username not found")
         res.status(409).send("User doesn't exist")
 
     } else {
         try {
-            const result = await verifyPassword(password, response[0].hashed_password)
+            const result = await verifyPassword(password, rows[0].hashed_password)
             console.log(result)
             if (!result) {
                 res.status(200).json({ "message": "Wrong Password" })
             }
             else {
-                    const token = jwt.sign({ id: response[0].uid }, SECRET, { expiresIn: '1h' });
+                    const token = jwt.sign({ id: rows[0].uid }, SECRET, { expiresIn: '1h' });
                 res.status(200).json({ "message": "Logged in successfully", token })
                 
             }
@@ -76,13 +81,14 @@ router.post('/me', authenticateJwt, async (req, res) => {
     const { userId} = req
     try {
         const query = `SELECT * FROM profile WHERE uid = ?;`
-        let response = await pool.query(query, userId)
-        console.log(userId)
-        if (!response) {
+        let [rows,fields] = await pool.query(query, userId)
+        console.log(rows)
+        if (rows.length===0) {
+            
             res.status(200).json({ "message": "User not found" })
         }
         else {
-            const {name} = response[0]
+            const {name} = rows[0]
             console.log(name)
             res.status(200).json({  username : name})   
         }

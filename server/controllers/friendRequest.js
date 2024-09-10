@@ -1,18 +1,18 @@
 //function to send an actual friend request
-import pool from "../db.js";
+import pool from "../connections/db.js";
 
 export  async function sendRequest( senderid , receiverid){
-    const query = `INSERT INTO request (uid, senderid, receiverid) values (UUID() , ? , ?) returning *`;
+    const query = `INSERT INTO request (uid, senderid, receiverid) values (UUID() , ? , ?)`;
 
     senderid = senderid.toString()
     receiverid = receiverid.toString()
     let conn = await pool.getConnection();
 
     try{
-        const rows = await conn.query(query,[senderid,receiverid]);
-        // console.log(rows);  
-        return rows
-    }catch(err){
+         await conn.query(query,[senderid,receiverid]);
+         return { status: 200, message: 'Request successfully added.' };
+
+        }catch(err){
         console.log(err)
         if (err.code === 'ER_DUP_ENTRY') {
             // Parse the error message to find which field caused the issue
@@ -21,7 +21,7 @@ export  async function sendRequest( senderid , receiverid){
             }
         }
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
     
 }
@@ -47,13 +47,13 @@ export  async function listRequest(receiverid){
     let conn = await pool.getConnection();
 
     try{
-        const rows = await conn.query(query,receiverid);
+        const [rows] = await conn.query(query,receiverid);
         // console.log(rows);  
         return rows
     }catch(err){
         console.log(err)
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
 }
 
@@ -64,13 +64,13 @@ export  async function sentRequest(senderid){
     let conn = await pool.getConnection();
 
     try{
-        const rows = await conn.query(query,senderid);
+        const [rows] = await conn.query(query,senderid);
         // console.log(rows);  
         return rows
     }catch(err){
         console.log(err)
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
 }
 
@@ -86,15 +86,13 @@ export  async function acceptRequest( uid ){
     let conn = await pool.getConnection();
 
     try{
-        let rows = await conn.query(query,uid);
+        let [rows] = await conn.query(query,uid);
         console.log(rows);  
-        // rows = await conn.query(selectQuery,uid)    
-        console.log(rows)
         return rows
     }catch(err){
         console.log(err)
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
     
 }
@@ -103,6 +101,7 @@ export  async function acceptRequest( uid ){
 
 export  async function listFriend( user_one){ 
     const query = `SELECT 
+            fc.uid AS chat_uid,
             CASE 
                 WHEN fc.user_one = ? THEN p2.uid 
                 ELSE p1.uid 
@@ -122,12 +121,12 @@ export  async function listFriend( user_one){
     user_one = user_one.toString()
     let conn = await pool.getConnection();
     try{
-        let rows = await conn.query(query,[user_one, user_one ,user_one,user_one,user_one           ]);
+        let [rows] = await conn.query(query,[user_one, user_one ,user_one,user_one,user_one]);
         return rows
     }catch(err){
         console.log(err)
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
     
 }

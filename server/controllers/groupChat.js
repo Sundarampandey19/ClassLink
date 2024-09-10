@@ -14,7 +14,7 @@ export default async function createGroupChat(pool,name,description,adminid){
     }catch(err){
         console.log(err)
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
 
 }
@@ -34,7 +34,7 @@ export default async function addGroupParticipant(pool,participantid , group_cha
     }catch(err){
         console.log(err)
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
 
 }
@@ -59,6 +59,6 @@ export default async function sendGroupMessage(pool,sender_id , message_type , c
     }catch(err){
         console.log(err)
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
 }

@@ -19,7 +19,7 @@ export default async function sendMessage(pool , sender_id , receiver_id , messa
     }catch(err){
         console.log(err) 
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
     
 }

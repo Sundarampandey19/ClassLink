@@ -65,16 +65,17 @@ export async function sentRequest() {
 }
 
 // Function to get the list of users you haven't sent a request to
-export async function getUsersWithoutSentRequest() {
+export async function   getUsersWithoutSentRequest() {
     try {
         // Fetch all users
         const allUsers = await getUsers(); // Assume you have a function that fetches all users
-
+        console.log("All the users",allUsers)
         // Fetch the list of users you have sent a request to
         const sentRequests = await sentRequest();
-
         // Extract the receiverIds from sent requests
-        const sentRequestReceiverIds = sentRequests.map(request => request.receiverId);
+        console.log("All the sent out request",sentRequests)
+        const sentRequestReceiverIds = sentRequests.map((request) => request.receiverid);
+        console.log("ALl the requests ", sentRequestReceiverIds)
 
         // Filter users to get those who haven't received a request from you
         const usersWithoutSentRequest = allUsers.filter(user => 

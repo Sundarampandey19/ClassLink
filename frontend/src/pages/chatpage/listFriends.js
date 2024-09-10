@@ -1,13 +1,4 @@
 
-
-
-
-
-
-
-
-
-
 export async function listFriend() {
     const token = localStorage.getItem("token");
     try {

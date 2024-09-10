@@ -10,6 +10,7 @@ const authenticateJwt = (req, res, next) => {
               return res.sendStatus(403);
           }
           req.userId = decoded.id;  // Adjusted this line to correctly set req.userId
+          console.log("Exited from middleware")
           next();
       });
   } else {

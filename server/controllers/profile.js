@@ -1,8 +1,7 @@
-import stringifyArray from "../utils/stringify.js";
-import pool from "../db.js";
+import pool from "../connections/db.js";
 
 async function createProfile(username ,name , ph_number , hashed_password, email ){
-    const query = `INSERT INTO profile (uid,username ,name , ph_number, hashed_password , email) values (UUID() ,?,?,?,?,?) returning *;`
+        const query = `INSERT INTO profile (uid,username ,name , ph_number, hashed_password , email) values (UUID() ,?,?,?,?,?) ;`
     let values = [username , name , ph_number , hashed_password ,email]        
 
     try {
@@ -40,7 +39,7 @@ async function createProfile(username ,name , ph_number , hashed_password, email
     }catch(err){
         console.log(err)
     }finally{
-        if(conn)conn.end();
+        if(conn)conn.release();
     }
 
 }

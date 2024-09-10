@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listFriend } from "./listFriends";
 
 
-export default function SideBar() {
+export default function SideBar({onSelectChat}) {
   const { data, error, isLoading } = useQuery({
     queryKey: ['listFriend'],
     queryFn: listFriend,
@@ -26,27 +26,19 @@ export default function SideBar() {
         />
       </div>
       <div className="overflow-y-auto">
-        {/* Add list of contacts/chats here */}
 
         <div className="overflow-y-auto">
           {isEmpty ?
             <div>No friends</div> : <div>{data.map((user) => (
-              <div key={user.user_id} className="p-4 border-b dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer">{user.name}</div>
+              <div key={user.user_id} 
+              className="p-4 border-b dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+              onClick={() => onSelectChat(user)}
+              >{user.name}</div>
             ))}</div>}
         </div>
-        {/* {isEmpty ? (
-    <div>No friends</div>
-  ) : (
-    data.map((user, index) => (
-      <div
-        key={index}
-        className="p-4 border-b dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
-      >
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{user.name}</h2>
-        <p className="text-gray-600 dark:text-gray-400 text-sm">Hey! How are you?</p>
-      </div>
-    ))
-  )} */}
+
+        {/* <p className="text-gray-600 dark:text-gray-400 text-sm">Hey! How are you?</p> */}
+
       </div>
     </div>
   </>)
