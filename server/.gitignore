@@ -1,5 +1,6 @@
 node_modules
 .env
 
-kakfa.ca.pem
+kafka.ca.pem
+
 redis.ca.pem
