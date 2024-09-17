@@ -31,7 +31,10 @@ export default function ChatArea({ selectedChat }) {
     // Listen for incoming messages
     newSocket.on('receiveMessage', (message) => {
       console.log("somethis")  
-      setMessages((prevMessages) => [...prevMessages, message]);
+      console.log(auth.uid , message.sender_id)
+      if (message.sender_id !== auth.uid) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
       console.log(messages)
     });
 
@@ -44,11 +47,13 @@ export default function ChatArea({ selectedChat }) {
     console.log(message)
     if (message.trim() && socket) {
       const chatMessage = {
-        roomId: selectedChat.chat_uid,
-        sender: auth.username,  // You can replace this with the actual sender name/ID
-        message,
+        sender_id:auth.uid, 
+        receiver_id: selectedChat.user_id, 
+        message_type: 'text', 
+        content: message, 
+        roomId: selectedChat.chat_uid 
       };
-      socket.emit('message', chatMessage);  // Emit message to the server
+      socket.emit('message', chatMessage);  
       setMessages((prevMessages) => [...prevMessages, chatMessage]);
       setmessage("");
     }         

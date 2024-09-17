@@ -4,6 +4,7 @@ import cors from "cors"
 import friend from "./routes/addFriend.js"
 import initializeSocket from "./routes/socketConn.js";
 import { createServer } from "http";
+import { startConsumer } from "./services/kafka.js";
 
 const app = express()
 const server = createServer(app);
@@ -15,6 +16,7 @@ app.use(auth)
 app.use('/friend', friend)
 
  initializeSocket(server);
+ startConsumer()
 
 
 server.listen('3000', () => {

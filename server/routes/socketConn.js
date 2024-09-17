@@ -1,12 +1,23 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import { SECRET } from '../middleware/index.js';
+import redisClient from "../connections/redisClient.js";
+import { produceMessage } from "../services/kafka.js";
+
+
+const redisPublisher = redisClient.duplicate(); // Duplicate Redis client for publisher
+const redisSubscriber = redisClient.duplicate(); // Duplicate Redis client for subscriber
+
+
+await redisPublisher.connect();
+await redisSubscriber.connect();
+
 
 const initializeSocket = (server) => {
     
     const io = new Server(server, {
         cors: {
-            origin: "*", // Set this to your frontend domain in production
+            origin: "*",
             methods: ["GET", "POST"]
         }
     });
@@ -14,7 +25,6 @@ const initializeSocket = (server) => {
     // Middleware for Socket.IO to authenticate using JWT
     io.use((socket, next) => {
         const token = socket.handshake.auth.token;
-        // console.log(token)
         if (!token) {
             return next(new Error("Authentication error"));
         }
@@ -28,10 +38,20 @@ const initializeSocket = (server) => {
         });
     });
 
+    redisSubscriber.subscribe('chat-room', (message, channel) => {
+        const { roomId, chatMessage } = JSON.parse(message);
+        io.to(roomId).emit('receiveMessage', chatMessage);
+        produceMessage(message)
+    });
+
+
+
+
+
     // Handle a client connection
     io.on('connection', (socket) => {
         console.log(`User connected: ${socket.userId}`);
-        
+
         socket.on('joinRoom', ({ roomId }) => {
             socket.join(roomId);
             console.log(`User ${socket.userId} joined room: ${roomId}`);
@@ -42,13 +62,23 @@ const initializeSocket = (server) => {
         // Listen for a custom event (e.g., a message event)
         socket.on('message', (data) => {
             console.log(JSON.stringify(data))
-            const {roomId} = data
-            
-            io.to(roomId).emit('receiveMessage', { message: data.message });
-            io.emit('message', { userId: socket.userId, message: data });
+            const { roomId, message_type, content, receiver_id } = data;
+
+            const chatMessage = {
+                sender_id: socket.userId,
+                receiver_id,  // Receiver ID from frontend
+                message_type,
+                content,
+                roomId
+            };
+
+
+            redisPublisher.publish('chat-room', JSON.stringify({ roomId, chatMessage }));
+
+
         });
 
-        
+
         // Handle client disconnection
         socket.on('disconnect', () => {
             console.log(`User disconnected: ${socket.userId}`);

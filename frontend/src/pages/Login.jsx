@@ -4,8 +4,8 @@ import { Toaster, toast } from 'react-hot-toast';
 import { authState } from '@/store/authState';
 import { useRecoilState } from 'recoil';
 
-export default function Login(){
-  const navigate = useNavigate()
+export default function Login() {
+  const navigate = useNavigate();
   const [auth, setAuth] = useRecoilState(authState);
   const [formData, setFormData] = useState({
     username: '',
@@ -22,36 +22,50 @@ export default function Login(){
     e.preventDefault();
     const { username, password } = formData;
 
-    if (!username ||  !password) {
+    if (!username || !password) {
       setError('All fields are required');
       return;
     }
 
-    const response = await fetch('http://localhost:3000/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({  username, password })
-    });
-    console.log(response) 
-    const data = await response.json();
-    if (data.token) {
-      localStorage.setItem("token", data.token);
-      setAuth({ token: data.token, username });
-      console.log("token:",data.token)
-      navigate("/chats");
-      toast.success('Logged In successfully!');
-    } else {
-      alert("Error while signing up");
-    }
+    try {
+      const response = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
 
-    console.log('Form submitted:', formData);
-    setError(''); // Clear the error if the form is submitted successfully
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        const token = localStorage.getItem("token");
+
+        // Fetch user info with the token
+        const response2 = await fetch('http://localhost:3000/me', {
+          method: 'POST',
+          headers: { authorization: `Bearer ${token}` }
+        });
+
+        const data2 = await response2.json();
+        if (data2.username) {
+          setAuth({ token: token, username: data2.username, uid: data2.uid });
+          navigate("/chats");
+          toast.success('Logged In successfully!');
+        } else {
+          toast.error("Unable to retrieve user info");
+        }
+      } else {
+        toast.error("Invalid login credentials");
+      }
+    } catch (err) {
+      toast.error('Something went wrong. Please try again.');
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="w-full max-w-md p-8 space-y-6 bg-white dark:bg-gray-800 shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">Sign Up</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">Log In</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && <div className="text-red-500 text-sm">{error}</div>}
 

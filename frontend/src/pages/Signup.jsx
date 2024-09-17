@@ -40,7 +40,14 @@ export default function Signup(){
     const data = await response.json();
     if (data.token) {
       localStorage.setItem("token", data.token);
-      setAuth({ token: data.token, username });
+      const response2 = await fetch('http://localhost:3000/me', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${token}` }
+      });
+      const data2 = await response2.json();
+      if (data2.username) {
+      setAuth({ token: token, username: data2.username , uid: data2.uid});
+    }
       console.log("token:",data.token)
       navigate("/chats");
       toast.success('User Created Successfully!');

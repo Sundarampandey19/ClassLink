@@ -2,7 +2,7 @@ import { atom } from 'recoil';
 
 export const authState = atom({
   key: 'authState',
-  default: { token: null, username: null },
+  default: { token: null, username: null , uid: null },
 }); 
 
 export const loadingState = atom({

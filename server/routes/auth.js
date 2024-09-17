@@ -88,9 +88,9 @@ router.post('/me', authenticateJwt, async (req, res) => {
             res.status(200).json({ "message": "User not found" })
         }
         else {
-            const {name} = rows[0]
-            console.log(name)
-            res.status(200).json({  username : name})   
+            const {name, uid} = rows[0]
+            console.log(name,uid)
+            res.status(200).json({  username : name , uid})   
         }
     } catch {
         res.status(500).send("Error getting user")

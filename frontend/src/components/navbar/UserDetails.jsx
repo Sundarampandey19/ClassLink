@@ -21,7 +21,7 @@ export default function UserDetails() {
         console.log(auth.token); // Log the current token for debugging
         if (auth.token !== null) {
             localStorage.removeItem('token');
-            setAuth({ token: null, username: null });
+            setAuth({ token: null, username: null , uid:null});
             toast.success('Logged out successfully!');
             console.log("User logged out");
             navigate("/"); // Navigate to the home or login page

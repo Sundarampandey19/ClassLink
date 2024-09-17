@@ -7,7 +7,6 @@ export default function InitState() {
     const setAuth = useSetRecoilState(authState);
     const navigate = useNavigate();
     const setLoading = useSetRecoilState(loadingState);
-    // const auth = useRecoilValue(authState);
   
     const init = async () => {
         setLoading(true);
@@ -21,7 +20,7 @@ export default function InitState() {
         if (data.username) {
         //   console.log(data)
         //   console.log("init")
-          setAuth({ token: token, username: data.username });
+          setAuth({ token: token, username: data.username , uid: data.uid});
           navigate("/chats");
   
         } else {

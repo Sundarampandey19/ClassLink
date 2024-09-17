@@ -1,2 +1,5 @@
 node_modules
 .env
+
+kakfa.ca.pem
+redis.ca.pem
