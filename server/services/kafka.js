@@ -55,8 +55,13 @@ export async function startConsumer() {
                 const {chatMessage} = messageCon
                 const {sender_id , receiver_id , message_type , content , roomId} = chatMessage
                 console.log({sender_id , receiver_id , message_type , content , roomId})
+                let response
+                try{
+                    response = await sendMessage(sender_id , receiver_id , message_type , content , roomId)
 
-                const response = await sendMessage(sender_id , receiver_id , message_type , content , roomId)
+                }catch(e){
+                    console.log(e)
+                }
                 console.log(response)
 
             } catch (err) {

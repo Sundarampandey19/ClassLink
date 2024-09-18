@@ -5,8 +5,8 @@ import redisClient from "../connections/redisClient.js";
 import { produceMessage } from "../services/kafka.js";
 
 
-const redisPublisher = redisClient.duplicate(); // Duplicate Redis client for publisher
-const redisSubscriber = redisClient.duplicate(); // Duplicate Redis client for subscriber
+const redisPublisher = redisClient.duplicate(); 
+const redisSubscriber = redisClient.duplicate(); 
 
 
 await redisPublisher.connect();
@@ -62,11 +62,12 @@ const initializeSocket = (server) => {
         // Listen for a custom event (e.g., a message event)
         socket.on('message', (data) => {
             console.log(JSON.stringify(data))
-            const { roomId, message_type, content, receiver_id } = data;
+            const { temp_message_id, roomId, message_type, content, receiver_id } = data;
 
             const chatMessage = {
+                temp_message_id,
                 sender_id: socket.userId,
-                receiver_id,  // Receiver ID from frontend
+                receiver_id, 
                 message_type,
                 content,
                 roomId

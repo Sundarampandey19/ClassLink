@@ -2,6 +2,9 @@ import { authState } from '@/store/authState';
 import React, { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { io } from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
+
+
 
 export default function ChatArea({ selectedChat }) {
   // console.log(selectedChat)
@@ -45,8 +48,11 @@ export default function ChatArea({ selectedChat }) {
 
   function sendMessage() {
     console.log(message)
+    const tempMessageId = uuidv4();
+
     if (message.trim() && socket) {
       const chatMessage = {
+        temp_message_id: tempMessageId,
         sender_id:auth.uid, 
         receiver_id: selectedChat.user_id, 
         message_type: 'text', 
@@ -75,17 +81,14 @@ export default function ChatArea({ selectedChat }) {
             </h2>
           </div>
           <div className="flex-1 p-4 overflow-y-auto bg-gray-100 dark:bg-gray-900">
-            {JSON.stringify(messages)}  
-            {/* {chats[selectedChat.user_id]?.map((chat, index) => (
-                        <div
-                          key={index}
-                          className={`p-2 mb-2 rounded-lg ${
-                            chat.sender === 'You' ? 'bg-blue-500 text-white self-end' : 'bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                          }`}
-                        >
-                          <p>{chat.message}</p>
-                        </div>
-                      ))} */}
+            {/* {JSON.stringify(messages)}   */}
+            {messages.map((message)=>(
+              <div key={message.temp_message_id} className={message.sender_id === auth.uid ? 'chat chat-end ' : 'chat chat-start'}  >
+                   <div className="chat-bubble">{message.content}</div>
+                 
+                 </div>
+              
+              ))}
 
           </div>
           <form
