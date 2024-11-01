@@ -25,3 +25,13 @@ ClassLink is a scalable communication platform designed for universities to cent
    ```bash
    git clone https://github.com/Sundarampandey19/Classlink
    cd Classlink
+   ```
+
+2. **Install the required libraries**
+    ```bash
+    cd frontend/
+    npm install
+
+    cd ../server/
+    npm install
+    ```
