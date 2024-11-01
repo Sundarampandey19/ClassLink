@@ -14,7 +14,7 @@ ClassLink is a scalable communication platform designed for universities to cent
 
 - **Frontend**: React, TailwindCSS
 - **Backend**: Node.js, Express.js
-- **Database**: MySQL
+- **Database**: My            SQL
 - **Real-time Communication**: Socket.IO, Redis Pub/Sub
 - **Message Queues**: Kafka for reliable, scalable event-driven architecture
 - **State Management**: Recoil for handling global states in React

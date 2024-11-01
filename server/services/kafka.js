@@ -29,7 +29,6 @@ export async function createProducer() {
 
 export async function produceMessage(message) {
     const producer = await createProducer();
-    //   console.log(producer);
     await producer.send({
         messages: [{ key: `message-${Date.now()}`, value: message }],
         topic: 'MESSAGES',
