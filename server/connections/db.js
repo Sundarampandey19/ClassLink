@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Function to create and return a MySQL connection pool
-export const createPool = () => {
+export const createPool = async () => {
   return mysql.createPool({
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
@@ -20,5 +20,5 @@ export const createPool = () => {
 };
 
 
- const pool =await createPool();
+ const pool = await createPool();
  export default pool

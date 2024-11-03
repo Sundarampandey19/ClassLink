@@ -3,17 +3,22 @@ import fs from 'fs';
 import path from 'path';
 import sendMessage from '../controllers/sendMessage.js';
 
+// const kafka = new Kafka({
+//     brokers: [process.env.KAFKA_BROKER],
+//     ssl: {
+//         ca: [fs.readFileSync(path.resolve('./kafka.ca.pem'), 'utf-8')],
+//     },
+//     sasl: {
+//         username: process.env.KAFKA_USERNAME,
+//         password: process.env.KAFKA_PASSWORD,
+//         mechanism: 'plain',
+//     },  
+// });
+
 const kafka = new Kafka({
-    brokers: [process.env.KAFKA_BROKER],
-    ssl: {
-        ca: [fs.readFileSync(path.resolve('./kafka.ca.pem'), 'utf-8')],
-    },
-    sasl: {
-        username: process.env.KAFKA_USERNAME,
-        password: process.env.KAFKA_PASSWORD,
-        mechanism: 'plain',
-    },
-});
+    clientId: 'my-app',
+    brokers: ['localhost:9092'], // Use 9093 if you are using SSL
+  });
 
 let producer = null;
 
