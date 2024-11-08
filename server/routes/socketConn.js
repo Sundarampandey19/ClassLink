@@ -3,7 +3,7 @@
     import { SECRET } from '../middleware/index.js';
     import redisClient from "../connections/redisClient.js";
     import { produceMessage } from "../services/kafka.js";
-
+    import { v4 as uuidv4 } from 'uuid';
     const redisPublisher = redisClient.duplicate(); 
     const redisSubscriber = redisClient.duplicate(); 
 
@@ -40,7 +40,7 @@
             produceMessage(message)
         });
 
-        // Handle a client connection
+        
         io.on('connection', (socket) => {
             console.log(`User connected: ${socket.userId}`);
 
@@ -55,6 +55,7 @@
                 const { temp_message_id, roomId, message_type, content, receiver_id } = data;
 
                 const chatMessage = {
+                    id:uuidv4(),
                     temp_message_id,
                     sender_id: socket.userId,
                     receiver_id, 
@@ -68,9 +69,18 @@
 
                 // Redis publish omitted
                 redisPublisher.publish('chat-room', JSON.stringify({ roomId, chatMessage }));
+                socket.emit('messageSent', { temp_message_id, id: chatMessage.id });
             });
 
-            // Handle client disconnection
+            socket.on('messageDelivered', ({ messageId, receiverId }) => {
+                io.to(receiverId).emit('messageDelivered', { messageId });
+            });
+    
+            socket.on('messageSeen', ({ messageId, receiverId }) => {
+                io.to(receiverId).emit('messageSeen', { messageId });
+            });
+
+            
             socket.on('disconnect', () => {
                 console.log(`User disconnected: ${socket.userId}`);
             });
@@ -78,3 +88,8 @@
     };
 
     export default initializeSocket;
+
+
+
+
+    

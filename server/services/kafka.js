@@ -17,7 +17,7 @@ import sendMessage from '../controllers/sendMessage.js';
 
 const kafka = new Kafka({
     clientId: 'my-app',
-    brokers: ['localhost:9092'], // Use 9093 if you are using SSL
+    brokers: ['localhost:9092'], 
   });
 
 let producer = null;
@@ -57,11 +57,11 @@ export async function startConsumer() {
                 console.log(JSON.parse(message.value.toString()))
                 const messageCon = JSON.parse(message.value.toString())
                 const {chatMessage} = messageCon
-                const {sender_id , receiver_id , message_type , content , roomId} = chatMessage
+                const {id , sender_id , receiver_id , message_type , content , roomId} = chatMessage
                 console.log({sender_id , receiver_id , message_type , content , roomId})
                 let response
                 try{
-                    response = await sendMessage(sender_id , receiver_id , message_type , content , roomId)
+                    response = await sendMessage( id , sender_id , receiver_id , message_type , content , roomId)
 
                 }catch(e){
                     console.log(e)
@@ -71,7 +71,7 @@ export async function startConsumer() {
             } catch (err) {
                 console.log("Error while inserting message into db")
                 // pause()
-                // setTimeout(() => { consumer.resume([{ topic: "MESSAGES" }]) }, 6 * 1000)
+                // setTimeout(() => { consumer.resume([{ topic: "MESSAGES" }]) }, 6 * 1000)     
             }
         }
     })
